@@ -1,0 +1,56 @@
+plugins {
+  id 'org.springframework.boot' version '2.2.2.RELEASE'
+  id "com.google.cloud.tools.jib" version "1.8.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'clustercamp'
+version = '1.0.0.RELEASE'
+sourceCompatibility = '11'
+
+configurations {
+  compile.exclude module: 'spring-boot-starter-tomcat'
+}
+
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  set('springCloudVersion', "Hoxton.SR1")
+}
+
+jib {
+  from {
+    image = "openjdk:11.0-jre-slim"
+  }
+
+  to {
+    image = "dockercamp/${project.name}"
+    tags = ["${springCloudVersion}".toString(), 'latest']
+  }
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.springframework.boot:spring-boot-starter-undertow'
+  implementation 'org.springframework.cloud:spring-cloud-config-server'
+  implementation 'org.springframework.cloud:spring-cloud-config-monitor'
+  implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
