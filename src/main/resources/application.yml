@@ -11,10 +11,6 @@ spring:
         git:
           uri: https://github.com/clustercamp/springcloud-java.git
           searchPaths: /configs/{application}
-#  rabbitmq:
-#    host: localhost
-#    username: springcloud
-#    password: springcloud
 management:
   metrics:
     tags:

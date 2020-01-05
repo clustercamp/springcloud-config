@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: springcloud-config
+  namespace: springcloud
+data:
+  application.yaml: |-
+    server:
+      port: 8888
+    spring:
+      application:
+        name: CONFIG
+      boot:
+          admin:
+            client:
+              url: http://eureka.springcloud.svc.cluster.local:8761/admin
+              instance:
+                preferIp: true
+      cloud:
+        config:
+          server:
+            git:
+              uri: https://github.com/clustercamp/springcloud-java.git
+              searchPaths: /configs/{application}
+      rabbitmq:
+        host: rabbitmq.springcloud.svc.cluster.local
+        port: 5672
+        username: springcloud
+        password: springcloud
+    management:
+      metrics:
+        tags:
+          application: ${spring.application.name}
+      endpoint:
+        metrics:
+          enabled: true
+      endpoints:
+        jmx:
+          exposure:
+            include: '*'
+        web:
+          exposure:
+            include: '*'
